@@ -6,6 +6,12 @@ import { penalties } from './seed/penalty.data';
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log('Deleting existing data...');
+  await prisma.allowance.deleteMany();
+  await prisma.penalty.deleteMany();
+  await prisma.classification.deleteMany();
+  await prisma.award.deleteMany();
+
   console.log('Seeding awards...');
   const createdAwards = await prisma.award.createMany({
     data: awards,
