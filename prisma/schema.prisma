@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Award {
+  id              Int              @id @default(autoincrement())
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @default(now())
+  code            String           @unique
+  name            String
+  publishedYear   Int
+  allowances      Allowance[]
+  classifications Classification[]
+}
+
+model Classification {
+  id                 String    @id @default(uuid())
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @default(now())
+  name               String
+  publishedYear      Int
+  awardCode          String
+  baseRate           Float
+  baseRateType       String
+  calculatedRate     Float
+  calculatedRateType String
+  award              Award     @relation(fields: [awardCode], references: [code])
+  penalties          Penalty[]
+}
+
+model Allowance {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @default(now())
+  name          String
+  publishedYear Int
+  amount        Float
+  awardCode     String
+  award         Award    @relation(fields: [awardCode], references: [code])
+}
+
+model Penalty {
+  id               String         @id @default(uuid())
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @default(now())
+  name             String
+  publishedYear    Int
+  rate             Float
+  rateUnit         String
+  calculatedRate   Float
+  classificationId String
+  classification   Classification @relation(fields: [classificationId], references: [id])
+}
